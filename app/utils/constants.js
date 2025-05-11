@@ -1,0 +1,22 @@
+let constants={};
+
+constants.AUTHS={
+    ADMIN:1,
+    USER:2
+}
+
+constants.ROLES={
+    ADMIN:1,
+    USER:2
+}
+
+constants.ERROR_TYPES={
+    DATA_NOT_FOUND: 'DATA_NOT_FOUND',
+    BAD_REQUEST: 'BAD_REQUEST',
+    MONGO_EXCEPTION: 'MONGO_EXCEPTION',
+    ALREADY_EXISTS: 'ALREADY_EXISTS',
+    FORBIDDEN: 'FORBIDDEN',
+    INTERNAL_SERVER_ERROR: 'INTERNAL_SERVER_ERROR',
+    UNAUTHORIZED: 'UNAUTHORIZED',
+}
+module.exports=constants;
