@@ -7,65 +7,67 @@ const adminRouter=express.Router()
 
 const adminRoutes=[
     {
-        method:'POST',
-        path:'/v1/admin/login',
-        joiSchemaForSwagger:{
-            group:'admin',
-            description:'Admin login',
-            body:{
-                email:Joi.string().email().required(),
-                password:Joi.string().min(8).required()
-            }
-        },
-        handler:adminControllers.adminlogin
-    },
-    {
-        method:'GET',
-        path:'/v1/admin/data',
-        joiSchemaForSwagger:{
-            group:'admin',
-            description:'Admin profile details',
-        },
-        auth:constants.AUTHS.ADMIN,
-        role:constants.ROLES.ADMIN,
-        handler:adminControllers.getProfile
-    },
-    {
-        method:'PUT',
-        path:'/v1/admin/update',
-        joiSchemaForSwagger:{
-            group:'admin',
-            description:'Admin profile update',
-            body:{
-                email:Joi.string().email().optional(),
-                password:Joi.string().min(8).optional()
-            }
-        },
-        auth:constants.AUTHS.ADMIN,
-        role:constants.ROLES.ADMIN,
-        handler:adminControllers.updatePass
-    },
-    {
         method:'GET',
         path:'/v1/admin/users',
         joiSchemaForSwagger:{
             group:'admin',
             description:'View Users',
-            query:{
-                start:Joi.number().min(0).required(),
-                count:Joi.number().min(1).max(20).required()
+            headers:{
+                authorization:Joi.string().required()
             },
-            body:{
-                email:Joi.string().email().optional(),
-                password:Joi.string().min(8).optional()
+            query:{
+                page:Joi.number().integer().required(),
+                limit:Joi.number().integer().max(20).required()
             }
         },
-        auth:constants.AUTHS.ADMIN,
+        auth: constants.AUTHS.ADMIN,
+        roles: ['admin'],
         role:constants.ROLES.ADMIN,
         handler:adminControllers.getUsers
+    },
+    {
+        method: 'GET',
+        path: '/v1/admin/user/:id',
+        joiSchemaForSwagger: {
+            group: 'admin',
+            description: 'View Spacefic User',
+            headers: {
+                authorization: Joi.string().required()
+            },
+            params: {
+                id:Joi.string().required(),
+            }
+        },
+        auth: constants.AUTHS.ADMIN,
+        roles: ['admin'],
+        role: constants.ROLES.ADMIN,
+        handler: adminControllers.getProfile
+    },
+    {
+        method: 'PUT',
+        path: '/v1/admin/updateUser/:id',
+        joiSchemaForSwagger: {
+            group: 'admin',
+            description: 'Update Spacefic User',
+            headers: {
+                authorization: Joi.string().required()
+            },
+            body: {
+                name: Joi.string().optional(),
+                role: Joi.string().optional(),
+                phone: Joi.string().optional(),
+            },
+            params: {
+                id: Joi.string().required(),
+            }
+        },
+        auth: constants.AUTHS.ADMIN,
+        roles: ['admin'],
+        role: constants.ROLES.ADMIN,
+        handler: adminControllers.updateProfile
     }
 ]
 
 routeUtils.route(adminRouter, adminRoutes);
 
-module.exports=adminRouter
+module.exports={adminRouter,adminRoutes};

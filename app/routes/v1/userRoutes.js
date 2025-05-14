@@ -14,42 +14,16 @@ const userRoutes = [
             group: 'user',
             description: 'User registration',
             body: {
-                email: Joi.string().email().required()
+                name:Joi.string().required(),
+                email: Joi.string().email().required(),
+                password: Joi.string().min(6).required(),
+                role: Joi.string().valid('employer', 'jobseeker').required(),
+                gender: Joi.string().valid('male', 'female', 'other'),
+                phone:Joi.string().required(),
             }
         },
         role:constants.ROLES.USER,
         handler: userControllers.register
-    },
-    {
-        method: 'POST',
-        path: '/v1/user/verification',
-        joiSchemaForSwagger: {
-            group: 'user',
-            description: 'Verify email',
-            body: {
-                email: Joi.string().email().required(),
-                otp: Joi.string().required(),
-            }
-        },
-        auth: constants.AUTHS.USER,
-        role:constants.ROLES.USER,
-        handler: userControllers.verifyEmail
-    },
-    {
-        method: 'POST',
-        path: '/v1/user/addDetails',
-        joiSchemaForSwagger: {
-            group: 'user',
-            description: 'User Details',
-            body: {
-                name: Joi.string().required(),
-                gender: Joi.string().required(),
-                password:Joi.string().required()
-            }
-        },
-        auth: constants.AUTHS.USER,
-        role:constants.ROLES.USER,
-        handler: userControllers.addDetails
     },
     {
         method: 'PUT',
@@ -57,9 +31,14 @@ const userRoutes = [
         joiSchemaForSwagger: {
             group: 'user',
             description: 'Update User',
+            headers:{
+                authorization:Joi.string().required()
+            },
             body: {
-                email: Joi.string().email().required(),
-                password: Joi.string().min(8).required() 
+                name:Joi.string().optional(),
+                gender: Joi.string().optional(),
+                role: Joi.string().optional(),
+                phone: Joi.string().optional(),
             }
         },
         auth: constants.AUTHS.USER,
@@ -74,7 +53,7 @@ const userRoutes = [
             description: 'User login',
             body: {
                 email: Joi.string().email().required(),
-                password: Joi.string().min(8).required() 
+                password: Joi.string().min(6).required() 
             }
         },
         role:constants.ROLES.USER,
@@ -86,6 +65,9 @@ const userRoutes = [
         joiSchemaForSwagger: {
             group: 'user',
             description: 'User profile details',
+            headers:{
+                authorization:Joi.string().required()
+            }
         },
         auth: constants.AUTHS.USER,
         role:constants.ROLES.USER,
@@ -97,57 +79,17 @@ const userRoutes = [
         joiSchemaForSwagger: {
             group: 'user',
             description: 'Delete User',
+            headers:{
+                authorization:Joi.string().required()
+            }
         },
         auth: constants.AUTHS.USER,
         role:constants.ROLES.USER,
         handler: userControllers.deleteUser
     },
-    {
-        method: 'POST',
-        path: '/v1/user/forgotPassword',
-        joiSchemaForSwagger: {
-            group: 'user',
-            description: 'Forgot Password',
-            body: {
-                email: Joi.string().email().required(),
-            }
-        },
-        // role:constants.ROLES.USER,
-        handler: userControllers.forgotPassword
-    },
-    {
-        method: 'POST',
-        path: '/v1/user/newPassword',
-        joiSchemaForSwagger: {
-            group: 'user',
-            description: 'Set new Password',
-            body: {
-                email: Joi.string().email().required(),
-                otp: Joi.any().required() ,
-                newPassword:Joi.string().min(8).required()
-            }
-        },
-        auth: constants.AUTHS.USER,
-        role:constants.ROLES.USER,
-        handler: userControllers.newPassword
-    },
-    {
-        method: 'POST',
-        path: '/v1/user/resetPassword',
-        joiSchemaForSwagger: {
-            group: 'user',
-            description: 'Reset User Password',
-            body: {
-                oldPassword:Joi.string().required(),
-                newPassword:Joi.string().min(8).required()
-            }
-        },
-        auth: constants.AUTHS.USER,
-        role:constants.ROLES.USER,
-        handler: userControllers.resetPassword
-    },
 ];
 
 routeUtils.route(userRouter, userRoutes);
 
-module.exports = userRouter;
+
+module.exports = {userRouter,userRoutes};

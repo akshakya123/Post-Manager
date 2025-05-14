@@ -23,12 +23,8 @@ authService.authenticateToken=()=>(request,response,next)=>{
     })
 }
 
-authService.generateToken = (id) => {
-    return jwt.sign({ id }, SECRET_KEY, { expiresIn: '2h' });
-}
-
-authService.generateTokenforEmail=(email)=>{
-    return jwt.sign({ email }, SECRET_KEY, { expiresIn: '2h' });
+authService.generateToken = (userId) => {
+    return jwt.sign({ userId }, SECRET_KEY, { expiresIn: '2h' });
 }
 
 authService.generateTokenforOtp=(otp)=>{

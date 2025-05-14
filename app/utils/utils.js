@@ -24,7 +24,7 @@ commonFunctions.sendMailToVerify = async (email, otp) => {
         });
 
         const mailOptions = {
-            from: '<kaurjaskirat487@gmail.com>',
+            from: '<abhishekhkumarshakya@gmail.com>',
             to: email, 
             subject: "Email OTP Verification",
             html: `<p>Your OTP for email verification is: <b>${otp}</b></p>`,
@@ -51,13 +51,12 @@ commonFunctions.sendMailToChangePassword = async (email, otp) => {
             host: "smtp-relay.brevo.com",
             port: 587,
             auth: {
-                user: "88c5ad001@smtp-brevo.com",
-                pass: "jgrkfTXb8xARSDWa",
+                //fill user and pass credentials
             },
         });
 
         const mailOptions = {
-            from: '<kaurjaskirat487@gmail.com>',
+            from: '<>',
             to: email, 
             subject: "Forgot Password Email",
             html: `<p>Your OTP for cahnging password is: <b>${otp}</b></p>`,

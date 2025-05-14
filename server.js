@@ -1,13 +1,14 @@
 const express = require('express');
-const http = require('http');
-const { Server } = require('socket.io');
-const path = require('path');
+// const http = require('http');
+// const { Server } = require('socket.io');
+// const path = require('path');
 const { PORT } = require('./config/config');
 
 const app = express();
 
 const startServer = async () => {
-    await require('./app/startup/expressStartup')(app);
+    const isSwaggerWrite = true;
+    await require('./app/startup/expressStartup')(app,isSwaggerWrite);
 
     return new Promise((res, rej) => {
         app.listen(PORT, (err) => {

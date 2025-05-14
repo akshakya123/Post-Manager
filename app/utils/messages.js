@@ -1,4 +1,5 @@
-module.exports={
+module.exports = {
+    USER_REGISTER:'User register success',
     WRONG_PASSWORD:'Wrong password',
     USER_NOT_FOUND:'User not found',
     EMAIL_ALREADY_REGISTERED:'User with same email already exist',
@@ -24,5 +25,13 @@ module.exports={
     MESSAGE_DELETED_SUCCESSFULLY:'Message has been deleted successfully',
     MESSAGE_UPDATED_SUCCESSFULLY:'Message has been updated successfully',
     SOCKET_SUCCESSFULL_CONNECTION:'Connected to socket sucessfully',
-    SOCKET_NOT_CONNECTED:'Unable to connect to socket'
+    SOCKET_NOT_CONNECTED:'Unable to connect to socket',
+    DATA_NOT_FOUND: 'DATA_NOT_FOUND',
+    BAD_REQUEST: 'BAD_REQUEST',
+    MONGO_EXCEPTION: 'MONGO_EXCEPTION',
+    ALREADY_EXISTS: 'ALREADY_EXISTS',
+    FORBIDDEN: 'FORBIDDEN',
+    INTERNAL_SERVER_ERROR: 'INTERNAL_SERVER_ERROR',
+    UNAUTHORIZED: 'UNAUTHORIZED',
+    SUCCESS:'Success'
 }

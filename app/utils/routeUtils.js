@@ -1,4 +1,5 @@
 const Joi = require('joi');
+const swaggerUI=require('swagger-ui-express')
 const path = require('path');
 const { MESSAGES, ERROR_TYPES } = require('./constants');
 const HELPERS = require('../helpers');
@@ -11,11 +12,15 @@ const authService = require('../services/authServices');
 const constants = require('./constants');
 const { createErrorResponse } = require('../helpers/helpers');
 const { SOMETHING_WENT_WRONG } = require('./messages');
+const { info } = require('../../config/swagger');
+const { swaggerServices } = require('../services');
+const { roleChecker } = require('../middelware/roleMiddelware');
+
 
 const routeUtils = {};
 
-routeUtils.route = async (app, routes = [],) => {
-    routes.forEach((route) => {
+routeUtils.route = async (app, routes = [], isSwaggerWrite) => {
+    routes.forEach(async(route) => {
         let middlewares = [];
         if (route.joiSchemaForSwagger?.formData) {
             const multerMiddleware = getMulterMiddleware(route.joiSchemaForSwagger.formData);
@@ -27,8 +32,13 @@ routeUtils.route = async (app, routes = [],) => {
             middlewares.push(authService.authenticateToken());
         }
 
-        app.route(route.path)[route.method.toLowerCase()](...middlewares, getHandlerMethod(route));
+        if (route.roles) {
+            middlewares.push(roleChecker(route.roles));
+        }
+        
+        await app.route(route.path)[route.method.toLowerCase()](...middlewares, getHandlerMethod(route));
     });
+    createSwaggerUIForRoutes(app, routes, isSwaggerWrite);
 };
 
 
@@ -91,12 +101,14 @@ let getValidatorMiddleware = (route) => (request, response, next) => {
 let getHandlerMethod = (route) => {
     const { handler } = route;
     return (request, response) => {
+    
         let payload = {
-            ...((request.body || {}).value || {}),
-            ...((request.params || {}).value || {}),
-            ...((request.query || {}).value || {}),
-            user: (request.user ? request.user : {}),
+            ...((request.body || {}).value || request.body || {}),
+            ...((request.params || {}).value || request.params || {}),
+            ...((request.query || {}).value || request.query || {}),
+            user: request.user || {},
         };
+
         if (route.getExactRequest) {
             request.payload = payload;
             payload = request;
@@ -123,8 +135,8 @@ let getHandlerMethod = (route) => {
             })
             .catch((err) => {
                 console.log('Error is ', err);
-                request.body.error = {};
-                request.body.error.message = err.message;
+                //request.body.error = {};
+                //request.body.error.message = err.message;
                 if (!err.statusCode && !err.status) {
                     err = createErrorResponse(SOMETHING_WENT_WRONG, constants.ERROR_TYPES.INTERNAL_SERVER_ERROR);
                 }
@@ -133,5 +145,25 @@ let getHandlerMethod = (route) => {
     };
 };
 
+/**
+ * function to create Swagger UI for the available routes of the application.
+ * @param {*} app Express instance.
+ * @param {*} routes Available routes.
+ */
+const createSwaggerUIForRoutes = (app, routes = [], isSwaggerWrite) => {
+
+	if(isSwaggerWrite){
+		const swaggerInfo = info
+		const swJson = swaggerServices;
+		swJson.swaggerDoc.createJsonDoc(swaggerInfo);
+		routes.forEach((route) => {
+			swJson.swaggerDoc.addNewRoute(route.joiSchemaForSwagger, route.path, route.method.toLowerCase());
+		});
+	}  
+    
+    const swaggerDocument = require('../../swagger.json');
+    app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerDocument));
+	//app.use('/', swaggerUI.serve, swaggerUI.setup(swaggerDocument));
+};
 
 module.exports = routeUtils;
